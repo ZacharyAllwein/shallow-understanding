@@ -5,6 +5,7 @@ use std::{
     ops::{Add, Mul, Sub, Div},
 };
 
+
 #[derive(Debug, Clone)]
 pub struct Term {
     pub coefficient: f32,
@@ -54,17 +55,10 @@ impl Sub for Term {
     type Output = Result<Self, &'static str>;
 
     fn sub(self, other: Self) -> Result<Self, &'static str> {
-        for (key, value) in self.variables.iter() {
-            match other.variables.get(key) {
-                Some(val) if val == value => (),
-                _ => return Err("incompatible variables"),
-            }
-        }
 
-        Ok(Self {
-            coefficient: self.coefficient - other.coefficient,
-            variables: self.variables,
-        })
+        let other = Self::new(-1f32 * other.coefficient, other.variables);
+        
+        self + other
     }
 }
 
@@ -99,25 +93,17 @@ impl Div for Term {
     type Output = Self;
 
     fn div(self, other: Self) -> Self{
+
+        let other_new_variables = other
+            .variables
+            .iter()
+            .map(|(&sym, &exp)| (sym, exp * -2))
+            .collect();
         
-        let new_coefficient: f32 = self.coefficient / other.coefficient;
+        let other_new_coefficient = 1f32 / (other.coefficient.powi(2));
 
-        let mut new_variables: HashMap<char, i32> = self.variables.clone();
+        let other_reciprocal = other * Term::new(other_new_coefficient, other_new_variables);
 
-        for (other_sym, other_exp) in other.variables.iter(){
-
-            match new_variables.get_mut(other_sym){
-                Some(self_exp) => *self_exp -= *other_exp,
-                None => {
-                    new_variables.insert(*other_sym, -(*other_exp));
-                }
-            }
-        }
-
-        new_variables = new_variables.into_iter().filter(|&(_, exp)| exp != 0).collect();
-
-        return Self {coefficient: new_coefficient, variables: new_variables};
-
-        
+        self * other_reciprocal
     }
 }
