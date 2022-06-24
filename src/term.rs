@@ -6,7 +6,7 @@ use std::{
 };
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Term {
     pub coefficient: f32,
     pub variables: HashMap<char, i32>,
@@ -51,17 +51,6 @@ impl Add for Term {
     }
 }
 
-impl Sub for Term {
-    type Output = Result<Self, &'static str>;
-
-    fn sub(self, other: Self) -> Result<Self, &'static str> {
-
-        let other = Self::new(-1f32 * other.coefficient, other.variables);
-        
-        self + other
-    }
-}
-
 impl Mul for Term {
     type Output = Self;
 
@@ -70,6 +59,7 @@ impl Mul for Term {
         let new_coefficient: f32 = self.coefficient * other.coefficient;
 
         let mut new_variables: HashMap<char, i32> = self.variables.clone();
+
 
         for (other_sym, other_exp) in other.variables.iter(){
 
@@ -81,11 +71,20 @@ impl Mul for Term {
             }
         }
 
-        new_variables = new_variables.into_iter().filter(|&(_, exp)| exp != 0).collect();
-
         return Self {coefficient: new_coefficient, variables: new_variables};
 
         
+    }
+}
+
+impl Sub for Term {
+    type Output = Result<Self, &'static str>;
+
+    fn sub(self, other: Self) -> Result<Self, &'static str> {
+
+        let other = Self::new(-1f32 * other.coefficient, other.variables);
+
+        self + other
     }
 }
 

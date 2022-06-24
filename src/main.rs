@@ -3,15 +3,15 @@ mod polynomial;
 
 use term::Term;
 use std::{collections::HashMap};
-use polynomial::{Polynomial, PolyEl};
+use polynomial::{Polynomial};
 
 fn main() {
-    let term = Term::new(6f32, HashMap::from([('x', 3), ('z', 8)]));
-    let term1 = Term::new(2f32, HashMap::from([('x', 3), ('z', 8)]));
-    // let term2 = Term::new(10f32, HashMap::from([('x', 1), ('y', 4)]));
-
-    // let poly: Polynomial = Polynomial(vec![PolyEl::Term(term), PolyEl::Add, PolyEl::Term(term1), PolyEl::Add, PolyEl::Term(term2)]);
-    // let poly2 = poly.clone();
-    println!("{}", (term - term1).unwrap());
+    let term = Term::new(1f32, HashMap::from([('x', 1)]));
+    let term2 = Term::new(5f32, HashMap::from([('x', 0)]));
+    let term3 = Term::new(-1f32, HashMap::from([('x', 0)]));
+    let poly = Polynomial(vec![term, term2]);
+    let poly2 = Polynomial(vec![term3]);
+    let poly3 = poly.clone();
+    println!("{}", (poly * poly3 * poly2).simplify());
 }
 
