@@ -1,6 +1,7 @@
 use std::{ops::{Add, Sub, Div, Mul}, fmt};
 
 //very simple fraction implementation because I'm tired and telling a computer how to do polynomial division is hard >:(
+#[derive(Debug, Clone, PartialEq)]
 pub struct Fraction{
     n: i32,
     d: i32,
@@ -80,6 +81,7 @@ impl fmt::Display for Fraction{
     }
 }
 
+//all factors for a positive number
 pub fn get_factors(num: u32) -> Vec<u32> {
     
     let mut factors = vec![];

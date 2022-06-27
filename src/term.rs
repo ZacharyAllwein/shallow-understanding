@@ -1,8 +1,9 @@
 use std::{char, fmt, collections::HashMap};
+use crate::fraction::Fraction;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Term {
-    pub coefficient: f32,
+    pub coefficient: Fraction,
     //why not use a hashmap you might ask, first fuck you I tried, second not sortable or hashable however
     //now that I think about it I probably could have gotten away with just turning a hashmap into a vec whenever I needed it
     //hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm whatever this is what version control is for
@@ -12,7 +13,7 @@ pub struct Term {
 
 impl Term {
     //base constructor
-    pub fn new(coefficient: f32, mut variables: Vec<(char, i32)>) -> Self {
+    pub fn new(coefficient: Fraction, mut variables: Vec<(char, i32)>) -> Self {
 
         //just calling attention to this because it is everywhere in the code just sorts the variables alphebetically to make things work well
         variables.sort_by(|a, b| a.0.cmp(&b.0));
@@ -24,9 +25,9 @@ impl Term {
     }
 
     //allows the creation of numbers defined as a term ex 5x^0 represents 5
-    pub fn num(num: f32) -> Self {
+    pub fn num(num: i32) -> Self {
         Self {
-            coefficient: num,
+            coefficient: Fraction::new(num, 1),
             variables: vec![('x', 0)],
         }
     }
@@ -44,7 +45,7 @@ impl Term {
 
         //return a new instance of Term that adds the two terms cloning self variables
         Ok(Self {
-            coefficient: self.coefficient + other.coefficient,
+            coefficient: self.coefficient.clone() + other.coefficient.clone(),
             variables: self.variables.clone(),
         })
     }
@@ -61,13 +62,13 @@ impl Term {
         }
 
         Ok(Self {
-            coefficient: self.coefficient + other.coefficient,
+            coefficient: self.coefficient.clone() + other.coefficient.clone(),
             variables: self.variables.clone(),
         })
     }
 
     pub fn mul(&self, other: &Self) -> Self {
-        let mut new_term = Term::new(self.coefficient * other.coefficient, self.variables.clone());
+        let mut new_term = Term::new(self.coefficient.clone() * other.coefficient.clone(), self.variables.clone());
 
         //kind of weird function, instead of maintaining a list I create a new instance of a term that is a copy of self
         //this gives me access to the var_get functionality. Using this I'm able to iterate through the variables in other,
@@ -100,7 +101,7 @@ impl Term {
         //same thing with subtraction I think it makes more sense to just copy paste mul logic instead of
         //writing some odd reciprocal multiplication wrapper, check history if you want to see that though
         //see mul comments
-        let mut new_term = Term::new(self.coefficient / other.coefficient, self.variables.clone());
+        let mut new_term = Term::new(self.coefficient.clone() / other.coefficient.clone(), self.variables.clone());
 
         for &(sym, exp) in other.variables.iter() {
             match new_term.var_get_mut(sym) {
