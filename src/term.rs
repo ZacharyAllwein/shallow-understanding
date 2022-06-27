@@ -1,4 +1,4 @@
-use std::{char, fmt};
+use std::{char, fmt, collections::HashMap};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Term {
@@ -12,7 +12,11 @@ pub struct Term {
 
 impl Term {
     //base constructor
-    pub fn new(coefficient: f32, variables: Vec<(char, i32)>) -> Self {
+    pub fn new(coefficient: f32, mut variables: Vec<(char, i32)>) -> Self {
+
+        //just calling attention to this because it is everywhere in the code just sorts the variables alphebetically to make things work well
+        variables.sort_by(|a, b| a.0.cmp(&b.0));
+
         Self {
             coefficient,
             variables,
@@ -29,6 +33,7 @@ impl Term {
 
     //adds two terms, may fail if incompatible variables
     pub fn add(&self, other: &Self) -> Result<Self, &'static str> {
+
         for (key, value) in self.variables.iter() {
             //sees if each self variable is in other and makes sure there exponents are matching for addition
             match other.var_get(*key) {
@@ -46,17 +51,17 @@ impl Term {
 
     pub fn sub(&self, other: &Self) -> Result<Self, &'static str> {
         //I think copying the add function is the most efficient, but I could use a combination of add and mul -1
+        
         for (key, value) in self.variables.iter() {
-            //sees if each self variable is in other and makes sure there exponents are matching for addition
+
             match other.var_get(*key) {
                 Ok(val) if val == *value => (),
                 _ => return Err("incompatible variables"),
             }
         }
 
-        //return a new instance of Term that adds the two terms cloning self variables
         Ok(Self {
-            coefficient: self.coefficient - other.coefficient,
+            coefficient: self.coefficient + other.coefficient,
             variables: self.variables.clone(),
         })
     }
@@ -81,6 +86,8 @@ impl Term {
             .into_iter()
             .filter(|(_sym, exp)| exp != &0)
             .collect();
+        
+        new_term.variables.sort_by(|a, b| a.0.cmp(&b.0));
 
         if new_term.variables.len() == 0 {
             new_term.variables.push(('x', 0));
@@ -107,6 +114,8 @@ impl Term {
             .into_iter()
             .filter(|(_sym, exp)| exp != &0)
             .collect();
+        
+        new_term.variables.sort_by(|a, b| a.0.cmp(&b.0));
 
         if new_term.variables.len() == 0 {
             new_term.variables.push(('x', 0));
@@ -149,20 +158,3 @@ impl fmt::Display for Term {
         write!(f, "{}{}", self.coefficient, variables_string)
     }
 }
-
-// impl Div for Term {
-//     type Output = Self;
-
-//     fn div(self, other: Self) -> Self {
-//         let other_new_variables = other
-//             .variables
-//             .iter()
-//             .map(|(&sym, &exp)| (sym, exp * -2))
-//             .collect();
-//         let other_new_coefficient = 1f32 / (other.coefficient.powi(2));
-
-//         let other_reciprocal = other * Term::new(other_new_coefficient, other_new_variables);
-
-//         self * other_reciprocal
-//     }
-// }

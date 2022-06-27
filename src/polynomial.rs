@@ -10,48 +10,7 @@ pub struct Polynomial(pub Vec<Term>);
 
 impl Polynomial {
     fn simplify(self) -> Polynomial {
-        // for (i, term1) in self.0.iter().enumerate() {
-        //     for (j, term2) in self.0.iter().enumerate() {
-        //         if i == j {
-        //             continue;
-        //         }
-
-        //         match term1.clone() + term2.clone() {
-        //             Ok(new_term) => {
-        //                 let mut new_terms: Vec<Term> = self
-        //                     .0
-        //                     .iter()
-        //                     .enumerate()
-        //                     .filter(|(k, _)| k != &i && k != &j)
-        //                     .map(|(_, term)| term.clone())
-        //                     .collect();
-        //                 new_terms.push(new_term);
-
-        //                 return Polynomial(new_terms).simplify();
-        //             }
-        //             _ => continue,
-        //         }
-        //     }
-        // }
-
-        let Polynomial(terms) = self;
-        let exponent_lists: HashMap<Term, Vec<Term>> = HashMap::new();
-
-        for term in &terms {
-            let base_term = term.clone() / Term::new(term.coefficient, HashMap::from([('x', 0)]));
-
-            println!("{}", base_term);
-        }
-
-        //haven't decide about this yet, removes everything with coefficient of 0
-        // Polynomial(
-        //     self.0
-        //         .into_iter()
-        //         .filter(|term| term.coefficient != 0f32)
-        //         .collect::<Vec<Term>>(),
-        // )
-
-        Polynomial(terms)
+        
     }
 }
 
